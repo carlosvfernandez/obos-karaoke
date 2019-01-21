@@ -1,2 +1,2 @@
 # obos-karaoke
-Obo's Karaoke App.
+O'bos Karaoke App.
