@@ -1,30 +1,13 @@
 const fs = require('fs');
-const Sequelize = require('sequelize');
 const { promisify } = require('util');
 const readFile = promisify(fs.readFile);
-
-const sequelize = new Sequelize('karaoke', 'root', '1234', {
-    host: 'localhost',
-    dialect: 'mysql',
-    operatorsAliases: false,
-
-    pool: {
-        max: 5,
-        min: 0,
-        acquire: 30000,
-        idle: 10000
-    }
-});
-
-
-
+const bbdd = require('./bbdd');
 
 const readList = async () => {
     const file = await (readFile('./LISTA KARAOKE', 'utf-8')); // Read as UTF-8
     return file.toString();
 };
 
-//Ignore empty rows
 const parseList = (list) => {
     var arraySongs = []
     list.split('\n').map(song => {
@@ -35,30 +18,14 @@ const parseList = (list) => {
     return arraySongs;
 };
 
-const connectBBDD = (conn) => {
-    conn
-        .authenticate()
-        .then(() => {
-            console.log('Connection has been established successfully.');
-        })
-        .catch(err => {
-            console.error('Unable to connect to the database:', err);
-        });
-    return conn;
-}
-const insertSongs = (listSongs) => {
-
-    listSongs.map(song => {
-        sequelize.query("INSERT INTO artists (name) VALUES('" + song[0] + "')");
-    });
-}
-
-const a = async () => {
+const mainProcess = async () => {
     const list = await readList();
     const listSongs = parseList(list);
-    // TODO: Connect with SQL
-    connectBBDD(sequelize);
-    // TODO: Insert those files into SQL
-    insertSongs(listSongs);
+    //Connect with SQL
+    const conn = bbdd.connectBBDD();
+    //Insert those files into SQL
+    bbdd.insertSongs(listSongs);
+    //bbdd.closeConnectionBBDD(conn);
 }
-a();
+
+mainProcess();
