@@ -1,37 +1,79 @@
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize('karaoke', 'root', '1234', {
-    host: 'localhost',
-    dialect: 'mysql',
-    operatorsAliases: false,
 
-    pool: {
-        max: 5,
-        min: 0,
-        acquire: 30000,
-        idle: 10000
-    }
+const sequelize = new Sequelize('karaoke', 'root', '1234', {
+  ost: 'localhost',
+  dialect: 'mysql',
 });
 
-const connectBBDD = () => {
-    sequelize
-        .authenticate()
-        .then(() => {
-            console.log('Connection has been established successfully.');
-        })
-        .catch(err => {
-            console.error('Unable to connect to the database:', err);
-        });
-    return sequelize;
-}
-
-const closeConnectionBBDD = (conn) => {
-    conn.close();
-}
-const insertSongs = (listSongs) => {
-    listSongs.map(song => {
-        sequelize.query("INSERT INTO artists (name) VALUES('" + song[0] + "')");
+const prepareBBDD = (list) => {
+  sequelize
+    .authenticate()
+    .then(() => {
+      console.log('Connection has been established successfully.');
+    })
+    .catch((err) => {
+      console.error('Unable to connect to the database:', err);
+    }).then(() => {
+      sequelize.query('CREATE DATABASE IF NOT EXISTS karaoke;').then(() => {
+        console.log('Database --> OK');
+      });
+    })
+    .then(() => {
+      sequelize.query('CREATE TABLE IF NOT EXISTS `karaoke`.`artists` (`id` INT NOT NULL AUTO_INCREMENT,`name` VARCHAR(45) NULL,PRIMARY KEY (`id`));').then(() => {
+        insertArtists(list);
+        console.log('Table artists --> OK');
+      });
+    })
+    .then(() => {
+      sequelize.query('CREATE TABLE IF NOT EXISTS `karaoke`.`songs` (`id` INT NOT NULL AUTO_INCREMENT,`name` VARCHAR(45) NULL,`id_artist` VARCHAR(45) NULL, PRIMARY KEY (`id`));').then(() => {
+        insertSongs(list);
+        console.log('Table artists --> Songs');
+      });
     });
-}
 
-module.exports = { connectBBDD, insertSongs, closeConnectionBBDD };
+  return sequelize;
+};
+
+const insertArtists = async (list) => {
+  await Promise.all(
+    list.map(async (row) => {
+      try {
+        const query = `INSERT INTO artists (name) 
+                    SELECT * FROM (SELECT '${row[0]}') AS tmp
+                    WHERE NOT EXISTS (
+                    SELECT name FROM artists WHERE name = '${row[0]}'
+                    ) LIMIT 1;`;
+        return sequelize.query(query);
+      } catch (error) {
+        console.log(error);
+      }
+    }),
+  );
+};
+
+const insertSongs = async (list) => {
+  await Promise.all(
+    list.map(async (row) => {
+      try {
+        const query1 = `SELECT id FROM artists WHERE name='${row[0]}'`;
+        const artistId = await sequelize.query(query1);
+
+
+        const query2 = `INSERT INTO songs (name, id_artist) 
+                                    SELECT * FROM (SELECT '${row[1]}', '${artistId[0][0].id}') AS tmp
+                                    WHERE NOT EXISTS (
+                                    SELECT name FROM songs WHERE name = '${row[1]}'
+                                    ) LIMIT 1;`;
+        return sequelize.query(query2);
+      } catch (error) {
+        sequelize.query(query2);
+      }
+    }),
+  ).then(() => {
+    sequelize.connectionManager.close().then(() => console.log('Database ready.'));
+  });
+};
+
+
+module.exports = { prepareBBDD };

@@ -20,12 +20,8 @@ const parseList = (list) => {
 
 const mainProcess = async () => {
     const list = await readList();
-    const listSongs = parseList(list);
-    //Connect with SQL
-    const conn = bbdd.connectBBDD();
-    //Insert those files into SQL
-    bbdd.insertSongs(listSongs);
-    //bbdd.closeConnectionBBDD(conn);
+    const parsedList = parseList(list);
+    const conn = bbdd.prepareBBDD(parsedList);
 }
 
 mainProcess();
