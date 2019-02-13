@@ -1,15 +1,14 @@
-var express = require('express');
-var bodyParser = require('body-parser');
+const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 
 app = express();
 
-//Cargar rutas
-var appRoutes = require('./routes/approutes');
+// Cargar rutas
+const appRoutes = require('./routes/approutes');
 
 
-
-//cors
+// cors
 app.use(cors({ origin: 'http://localhost:3800' }));
 app.use(express.json());
 

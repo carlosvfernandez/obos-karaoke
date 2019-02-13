@@ -45,8 +45,9 @@ const insertArtists = async (list) => {
                     SELECT name FROM artists WHERE name = '${row[0]}'
                     ) LIMIT 1;`;
         return sequelize.query(query);
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        console.log(err);
+        return err;
       }
     }),
   );

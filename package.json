@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/carlosvfernandez/obos-karaoke#readme",
   "devDependencies": {
+    "@babel/preset-react": "^7.0.0",
     "babel-cli": "^6.26.0",
     "eslint": "^5.13.0",
     "eslint-config-airbnb-base": "^13.1.0",
@@ -31,11 +32,15 @@
   },
   "dependencies": {
     "babel": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "mysql2": "^1.6.4",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
     "sequelize": "^4.42.0"
   }
 }

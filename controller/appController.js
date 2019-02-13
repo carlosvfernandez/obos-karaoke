@@ -1,122 +1,78 @@
-'use strict';
-
-var { Artist, Song } = require('../model/appModel.js');
 
 
+const { Artist, Song } = require('../model/appModel.js');
 
-exports.list_songs_like = function (req, res) {
-  var pattern = req.body.pattern;
 
+exports.list_songs_like = async ({ body: { pattern } }, res) => {
   if (!pattern) {
-    res.status(400).send({ error: true, message: 'Please provide the pattern.' });
+    return res.status(400).send({ error: true, message: 'Please provide the pattern.' });
   }
-  else {
-    Song.getSongsLike(pattern, function (err) {
-      if (err)
-        res.send(err);
-    });
-  }
+  const result = await Song.getSongsLike(pattern);
+  return res.send(result);
 };
 
-exports.list_artists_like = function (req, res) {
-  var pattern = req.body.pattern;
-
+exports.list_artists_like = async ({ body: { pattern } }, res) => {
   if (!pattern) {
-    res.status(400).send({ error: true, message: 'Please provide the pattern.' });
+    return res.status(400).send({ error: true, message: 'Please provide the pattern.' });
   }
-  else {
-    Artist.getArtistsLike(pattern, function (err) {
-      if (err)
-        res.send(err);
-    });
-  }
+  const result = await Artist.getArtistsLike(pattern);
+  return res.send(result);
 };
 
 
-exports.list_all_artists = async function (req, res) {
+exports.list_all_artists = async (req, res) => {
   try {
     const result = await Artist.getAllArtists();
-    res.send(result);
+    return res.send(result);
   } catch (err) {
-    res.status(500).json(err);
-    console.log('res', err);
-  };
+    return res.status(400).send({ error: true, message: `Please provide the ID of the artist. Error' + ${err} ` });
+  }
 };
 
-exports.list_artist = async function (req, res) {
-  try {
-    const result = await Artist.getArtist(req.params.artistId);
-    res.send(result);
-  } catch (err) {
-    res.status(500).json(err);
-    console.log('res', err);
-  };
+exports.list_artist = async (req, res) => {
+  if (!req.params.artistId) {
+    return res.status(400).send({ error: true, message: 'Please provide the ID of the artist.' });
+  }
+  const result = await Artist.getArtist(req.params.artistId);
+  return res.send(result);
 };
 
-exports.list_artist_songs = function (req, res) {
-  var artistId = req.params.artistId;
-
+exports.list_artist_songs = async ({ params: { artistId } }, res) => {
   if (!artistId) {
-    res.status(400).send({ error: true, message: 'Please provide the ID of the artist.' });
+    return res.status(400).send({ error: true, message: 'Please provide the ID of the artist.' });
   }
-  else {
-    Song.getArtistSongs(artistId, function (err) {
-      if (err)
-        res.send(err);
-    });
-  }
+  const songs = await Song.getArtistSongs(artistId);
+  return res.json(songs);
 };
 
-exports.list_artist_song = function (req, res) {
-  var artistId = req.params.artistId;
-  var songId = req.params.artistId;
-
+exports.list_artist_song = async ({ params: { artistId, songId } }, res) => {
   if (!artistId || !songId) {
-    res.status(400).send({ error: true, message: 'Please provide the ID of the artist/song.' });
+    return res.status(400).send({ error: true, message: 'Please provide the ID of the artist/song.' });
   }
-  else {
-    Song.getArtistSong(artistId, songId, function (err) {
-      if (err)
-        res.send(err);
-    });
-  }
+  const song = await Song.getArtistSong(artistId, songId);
+  return res.json(song);
 };
 
-
-exports.create_artist = function (req, res) {
-  var new_artist = new Artist(req.body);
-
-  if (!new_artist.name) {
-    res.status(400).send({ error: true, message: 'Please provide the name of the artist' });
+exports.create_artist = (req, res) => {
+  const newArtist = new Artist(req.body);
+  if (!newArtist.name) {
+    return res.status(400).send({ error: true, message: 'Please provide the name of the artist' });
   }
-  else {
-    Artist.createArtist(new_artist, function (err) {
-      if (err)
-        res.send(err);
-    });
-  }
+  const artist = Artist.createArtist(newArtist);
+  return res.json(artist);
 };
 
-exports.list_all_songs = async function (req, res) {
-  try {
-    const result = await Song.getAllSongs();
-    res.send(result);
-  } catch (err) {
-    res.status(500).json(err);
-    console.log('res', err);
-  };
+exports.list_all_songs = async (req, res) => {
+  const result = await Song.getAllSongs();
+  return result ? res.send(result) : res.status(400).send('Invalid request to get list of songs.');
 };
 
-exports.create_song = function (req, res) {
-  var new_song = new Song(req.body);
-  console.log(new_song)
-  if (!new_song.name || !new_song.id_artist) {
-    res.status(400).send({ error: true, message: 'Please provide the name of the song' });
+exports.create_song = (req, res) => {
+  const newSong = new Song(req.body);
+
+  if (!newSong.name || !newSong.id_artist) {
+    return res.status(400).send({ error: true, message: 'Please provide the name of the song and the ID of the artist' });
   }
-  else {
-    Song.createSong(new_song, function (err, artist) {
-      if (err)
-        res.send(err);
-    });
-  }
+  const song = Song.createSong(newSong);
+  return res.json(song);
 };

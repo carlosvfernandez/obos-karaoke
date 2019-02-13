@@ -1,100 +1,92 @@
 'user strict';
-var sequelize = require('./db.js');
-const Sequelize = require('sequelize')
+
+const Sequelize = require('sequelize');
+const sequelize = require('./db.js');
 
 const Artist = sequelize.define('artists', {
-    id: { type: Sequelize.INTEGER, primaryKey: true },
-    name: Sequelize.TEXT
-})
+  id: { type: Sequelize.INTEGER, primaryKey: true },
+  name: Sequelize.TEXT,
+});
 
 const Song = sequelize.define('songs', {
-    id: { type: Sequelize.INTEGER, primaryKey: true },
-    name: Sequelize.TEXT,
-    id_artist: Sequelize.INTEGER
-})
+  id: { type: Sequelize.INTEGER, primaryKey: true },
+  name: Sequelize.TEXT,
+  id_artist: Sequelize.INTEGER,
+});
 
 
-Artist.getAllArtists = async function getAllArtists() {
-    const result = await Artist.findAll({
-        attributes: ['id', 'name']
-    });
-    return result;
+Artist.getAllArtists = function getAllArtists() {
+  return Artist.findAll({
+    attributes: ['id', 'name'],
+  });
 };
 
-Song.getArtistSongs = async function getArtistSongs(artistId) {
-    const result = await Song.findAll({
-        where: {
-            id_artist: artistId
-        }
-    });
-    return result;
+Song.getArtistSongs = function getArtistSongs(artistId) {
+  return Song.findAll({
+    where: {
+      id_artist: artistId,
+    },
+  });
 };
 
-Song.getArtistSong = async function getArtistSong(artistId, songId) {
-    const result = await Song.findAll({
-        where: {
-            id_artist: artistId,
-            id: songId
-        }
-    });
-    return result;
+Song.getArtistSong = function getArtistSong(artistId, songId) {
+  return Song.findAll({
+    where: {
+      id_artist: artistId,
+      id: songId,
+    },
+  });
 };
 
-Song.getSongsLike = async function getSongsLike(pattern) {
-    const result = await Song.findAll({
-        where: {
-            name: {
-                $like: '%' + pattern + '%'
-            }
-        }
-    });
-    return result;
+Song.getSongsLike = function getSongsLike(pattern) {
+  return Song.findAll({
+    where: {
+      name: {
+        $like: `%${pattern}%`,
+      },
+    },
+  });
 };
 
-Artist.getArtistsLike = async function getArtistsLike(pattern) {
-    const result = await Artist.findAll({
-        where: {
-            name: {
-                $like: '%' + pattern + '%'
-            }
-        }
-    });
-    return result;
+Artist.getArtistsLike = function getArtistsLike(pattern) {
+  return Artist.findAll({
+    where: {
+      name: {
+        $like: `%${pattern}%`,
+      },
+    },
+  });
 };
 
-Artist.getArtist = async function getArtist(artistId) {
-    const result = await Artist.findAll({
-        where: {
-            id: artistId
-        }
-    });
-    return result;
+Artist.getArtist = function getArtist(artistId) {
+  return Artist.findAll({
+    where: {
+      id: artistId,
+    },
+  });
 };
 
-Artist.createArtist = async function createArtist(newArtist) {
-    const result = await Artist.findOrCreate({
-        where: {
-            name: newArtist.name
-        }
-    });
-    return result;
+Artist.createArtist = function createArtist(newArtist) {
+  return Artist.findOrCreate({
+    where: {
+      name: newArtist.name,
+    },
+  });
 };
 
-Song.getAllSongs = async function getAllSongs() {
-    const result = await Song.findAll({
-        attributes: ['id', 'name', 'id_artist']
-    });
-    return result;
+Song.getAllSongs = function getAllSongs() {
+  return Song.findAll({
+    attributes: ['id', 'name', 'id_artist'],
+  });
 };
 
-Song.createSong = async function createSong(newSong) {
-    const result = await Song.findOrCreate({
-        where: {
-            name: newSong.name,
-            id_artist: newSong.id_artist
-        }
-    })
-    return result;
+Song.createSong = function createSong(newSong) {
+  return Song.findOrCreate({
+    where: {
+      name: newSong.name,
+      id_artist: newSong.id_artist,
+    },
+  });
 };
 
-module.exports = { Artist, Song }
+module.exports = { Artist, Song };
