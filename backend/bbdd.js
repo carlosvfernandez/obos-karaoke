@@ -22,13 +22,11 @@ const prepareBBDD = (list) => {
     .then(() => {
       sequelize.query('CREATE TABLE IF NOT EXISTS `karaoke`.`artists` (`id` INT NOT NULL AUTO_INCREMENT,`name` VARCHAR(45) NULL,PRIMARY KEY (`id`));').then(() => {
         insertArtists(list);
-        console.log('Table artists --> OK');
       });
     })
     .then(() => {
       sequelize.query('CREATE TABLE IF NOT EXISTS `karaoke`.`songs` (`id` INT NOT NULL AUTO_INCREMENT,`name` VARCHAR(45) NULL,`id_artist` VARCHAR(45) NULL, PRIMARY KEY (`id`));').then(() => {
         insertSongs(list);
-        console.log('Table artists --> Songs');
       });
     });
 
@@ -68,7 +66,7 @@ const insertSongs = async (list) => {
                                     ) LIMIT 1;`;
         return sequelize.query(query2);
       } catch (error) {
-        sequelize.query(query2);
+        sequelize.query(this.query2);
       }
     }),
   ).then(() => {

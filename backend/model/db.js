@@ -1,9 +1,11 @@
 const Sequelize = require('sequelize');
 
-
 const sequelize = new Sequelize('karaoke', 'root', '1234', {
   ost: 'localhost',
   dialect: 'mysql',
+  define: {
+    timestamps: false,
+  },
 });
 
 // connect to database

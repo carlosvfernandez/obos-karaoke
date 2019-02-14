@@ -1,7 +1,4 @@
-
-
 const { Artist, Song } = require('../model/appModel.js');
-
 
 exports.list_songs_like = async ({ body: { pattern } }, res) => {
   if (!pattern) {
@@ -18,7 +15,6 @@ exports.list_artists_like = async ({ body: { pattern } }, res) => {
   const result = await Artist.getArtistsLike(pattern);
   return res.send(result);
 };
-
 
 exports.list_all_artists = async (req, res) => {
   try {
