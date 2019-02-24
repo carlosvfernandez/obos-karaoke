@@ -1,20 +1,20 @@
 import React, { Component } from 'react'
-import Song from './Song'
+import Artist from './Artist'
 
 export default class SongsList extends Component {
 
     state = {
-        songsList: []
+        artistsList: []
     }
 
     componentDidMount() {
-        this.getSongsList();
+        this.getArtistsList();
     }
 
-    getSongsList = async () => {
-        const a = await fetch("http://localhost:3800/songs")
+    getArtistsList = async () => {
+        const a = await fetch("http://localhost:3800/artists")
         const resp = await a.json();
-        this.setState({ songsList: resp })
+        this.setState({ artistsList: resp })
     }
 
     render() {
@@ -22,8 +22,8 @@ export default class SongsList extends Component {
             <table>
                 <tbody>
                     {
-                        this.state.songsList.map(song => (
-                            <Song key={song.id} song={song}></Song>
+                        this.state.artistsList.map(artist => (
+                            <Artist key={artist.id} artist={artist}></Artist>
                         ))
                     }
                 </tbody>
