@@ -1,3 +1,4 @@
 FROM node:alpine
 EXPOSE 8888
-CMD [ "sh" ]
+WORKDIR /home/node/app
+CMD [ "npm", "start" ]

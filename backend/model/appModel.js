@@ -1,7 +1,7 @@
 'user strict';
 
 const Sequelize = require('sequelize');
-const sequelize = require('./db.js');
+const sequelize = require('../database');
 
 const Artist = sequelize.define('artists', {
   id: { type: Sequelize.INTEGER, primaryKey: true },

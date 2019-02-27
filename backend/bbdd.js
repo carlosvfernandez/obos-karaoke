@@ -1,37 +1,12 @@
 const Sequelize = require('sequelize');
 
-
 const sequelize = new Sequelize('karaoke', 'root', '1234', {
-  ost: 'localhost',
+  host: 'db',
   dialect: 'mysql',
+  define: {
+    timestamps: false,
+  },
 });
-
-const prepareBBDD = (list) => {
-  sequelize
-    .authenticate()
-    .then(() => {
-      console.log('Connection has been established successfully.');
-    })
-    .catch((err) => {
-      console.error('Unable to connect to the database:', err);
-    }).then(() => {
-      sequelize.query('CREATE DATABASE IF NOT EXISTS karaoke;').then(() => {
-        console.log('Database --> OK');
-      });
-    })
-    .then(() => {
-      sequelize.query('CREATE TABLE IF NOT EXISTS `karaoke`.`artists` (`id` INT NOT NULL AUTO_INCREMENT,`name` VARCHAR(45) NULL,PRIMARY KEY (`id`));').then(() => {
-        insertArtists(list);
-      });
-    })
-    .then(() => {
-      sequelize.query('CREATE TABLE IF NOT EXISTS `karaoke`.`songs` (`id` INT NOT NULL AUTO_INCREMENT,`name` VARCHAR(45) NULL,`id_artist` VARCHAR(45) NULL, PRIMARY KEY (`id`));').then(() => {
-        insertSongs(list);
-      });
-    });
-
-  return sequelize;
-};
 
 const insertArtists = async (list) => {
   await Promise.all(
@@ -50,7 +25,6 @@ const insertArtists = async (list) => {
     }),
   );
 };
-
 const insertSongs = async (list) => {
   await Promise.all(
     list.map(async (row) => {
@@ -74,5 +48,32 @@ const insertSongs = async (list) => {
   });
 };
 
+
+const prepareBBDD = (list) => {
+  sequelize
+    .authenticate()
+    .then(() => {
+      console.log('Connection has been established successfully2.');
+    })
+    .catch((err) => {
+      console.error('Unable to connect to the database2:', err);
+    }).then(() => {
+      sequelize.query('CREATE DATABASE IF NOT EXISTS karaoke;').then(() => {
+        console.log('Database --> OK');
+      });
+    })
+    .then(() => {
+      sequelize.query('CREATE TABLE IF NOT EXISTS `karaoke`.`artists` (`id` INT NOT NULL AUTO_INCREMENT,`name` VARCHAR(45) NULL,PRIMARY KEY (`id`));').then(() => {
+        insertArtists(list);
+      });
+    })
+    .then(() => {
+      sequelize.query('CREATE TABLE IF NOT EXISTS `karaoke`.`songs` (`id` INT NOT NULL AUTO_INCREMENT,`name` VARCHAR(45) NULL,`id_artist` VARCHAR(45) NULL, PRIMARY KEY (`id`));').then(() => {
+        insertSongs(list);
+      });
+    });
+
+  return sequelize;
+};
 
 module.exports = { prepareBBDD };

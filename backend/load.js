@@ -21,9 +21,11 @@ const parseList = (list) => {
 };
 
 const mainProcess = async () => {
+  //handleSQLRootPassword();
+  //createDB();
   const list = await readList();
   const parsedList = parseList(list);
   bbdd.prepareBBDD(parsedList);
 };
 
-mainProcess();
+module.exports = { mainProcess };

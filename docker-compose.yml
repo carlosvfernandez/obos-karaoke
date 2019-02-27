@@ -2,6 +2,8 @@ version: "3"
 services:
   node:
     build: "./backend"
+    depends_on:
+      - db
     user: "node"
     working_dir: /home/node/app
     environment:
@@ -9,7 +11,9 @@ services:
     volumes:
       - ./backend/:/home/node/app
     expose:
-      - "8888"
+      - "3800"
+    ports:
+      - "3800:3800"
     #command: "sh"
     tty: true
     entrypoint: 
@@ -19,9 +23,18 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: example
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
+      MYSQL_HOST: 0.0.0.0
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: karaoke
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 1234
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+      # Where our data will be persisted
+    volumes:
+      - /usr/local/mysql
+      
+# Names our volume
+volumes:
+  my-db:
