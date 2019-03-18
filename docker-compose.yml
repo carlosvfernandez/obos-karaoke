@@ -1,6 +1,7 @@
 version: "3"
 services:
-  node:
+  obos_backend:
+    container_name: obos_backend
     build: "./backend"
     depends_on:
       - db
@@ -14,11 +15,8 @@ services:
       - "3800"
     ports:
       - "3800:3800"
-    #command: "sh"
-    tty: true
-    entrypoint: 
-      - sh
   db:
+    container_name: obos_db
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
@@ -31,10 +29,18 @@ services:
     expose:
       # Opens port 3306 on the container
       - '3306'
-      # Where our data will be persisted
     volumes:
-      - /usr/local/mysql
-      
-# Names our volume
-volumes:
-  my-db:
+      # Where our data will be persisted
+      - ./db:/var/lib/mysql
+  obos-frontend:
+    container_name: obos-frontend
+    depends_on:
+      - db
+      - obos_backend
+    build: ./frontend
+    volumes:
+      - ./frontend:/home/node/app
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
